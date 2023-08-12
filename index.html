@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geolocation API Example</title>
+</head>
+<body>
+    <h1>Geolocation API Example</h1>
+    <p>Click the button below to get your current fine-grained geolocation:</p>
+    <button id="getLocationBtn">Get Location</button>
+    <div id="locationInfo"></div>
+    <div id="maps">
+        <h2>Embedded Maps</h2>
+        <iframe id="googleMap" width="400" height="300" frameborder="0" style="border:0;" allowfullscreen=""></iframe>
+        <iframe id="openStreetMap" width="400" height="300" frameborder="0" style="border:0;"></iframe>
+    </div>
+
+    <script>
+        const getLocationBtn = document.getElementById('getLocationBtn');
+        const locationInfo = document.getElementById('locationInfo');
+        const googleMapFrame = document.getElementById('googleMap');
+        const openStreetMapFrame = document.getElementById('openStreetMap');
+
+        getLocationBtn.addEventListener('click', () => {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        const accuracy = position.coords.accuracy;
+
+                        locationInfo.innerHTML = `
+                            <p>Latitude: ${latitude}</p>
+                            <p>Longitude: ${longitude}</p>
+                            <p>Accuracy: ${accuracy} meters</p>
+                        `;
+
+                        // Update Google Map iframe
+                        googleMapFrame.src = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d0!2d${longitude}!3d${latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzjCsDE0JzI4LjEiTiA3N8KwMDYnNTguMiJF!5e0!3m2!1sen!2sus!4v1628786360802!5m2!1sen!2sus`;
+
+                        // Update OpenStreetMap iframe
+                        openStreetMapFrame.src = `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=16/${latitude}/${longitude}`;
+                    },
+                    error => {
+                        locationInfo.innerHTML = `<p>Error: ${error.message}</p>`;
+                    }
+                );
+            } else {
+                locationInfo.innerHTML = "<p>Geolocation is not available in your browser.</p>";
+            }
+        });
+    </script>
+</body>
+</html>
